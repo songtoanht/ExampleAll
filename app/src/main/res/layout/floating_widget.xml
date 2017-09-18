@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/rlNormal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imgWidget"
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/chip" />
+
+        <TextView
+            android:id="@+id/tvClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@id/imgWidget"
+            android:layout_margin="2dp"
+            android:background="#c0000000"
+            android:padding="5dp"
+            android:text="X"
+            android:textColor="@android:color/white" />
+
+        <TextView
+            android:id="@+id/tvZoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imgWidget"
+            android:layout_margin="2dp"
+            android:background="#80000000"
+            android:padding="5dp"
+            android:text="Zoom"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlZoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/imgWidgetZoom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:src="@drawable/chip" />
+
+        <TextView
+            android:id="@+id/tvCollapse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imgWidgetZoom"
+            android:layout_margin="3dp"
+            android:background="#80000000"
+            android:padding="10dp"
+            android:text="Z--"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,16 +1,15 @@
 package com.zalologin.ebook
 
-import android.content.Context
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.zalologin.R
-import com.zalologin.databinding.ActivityDetailBookBinding
-import com.zalologin.databinding.ActivityListBookBinding
-import nl.siegmann.epublib.domain.TOCReference
+import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.zalologin.R
+import com.zalologin.databinding.ActivityDetailBookBinding
+import nl.siegmann.epublib.domain.TOCReference
 
 
 /**
@@ -39,14 +38,56 @@ class DetailBookActivity : AppCompatActivity() {
         val s = String(tocReference.resource.data)
         mBinding.web.settings.javaScriptEnabled = true
 
+
+        setWebViewListener()
+
+
         mBinding.web.loadUrl("file://" + desFolder + tocReference.resource.href)
     }
 
+    fun setWebViewListener() {
+        mBinding.web.setWebViewClient(object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                val webView = view
 
-    fun readCss() :String{
+                val varMySheet = "var mySheet = document.styleSheets[0];"
+                val addCSSRule = "function addCSSRule(selector, newRule) {" +
+                        "ruleIndex = mySheet.cssRules.length;" +
+                        "mySheet.insertRule(selector + '{' + newRule + ';}', ruleIndex);}"
+
+                val insertRule1 = "addCSSRule('html', 'padding: 0px; height: " +
+                        (webView!!.getMeasuredHeight() / getResources().getDisplayMetrics()
+                                .density) + "px; -webkit-column-gap: 0px; -webkit-column-width: " +
+                        webView.getMeasuredWidth() + "px;')"
+
+
+                webView.loadUrl("javascript:" + varMySheet)
+                webView.loadUrl("javascript:" + addCSSRule)
+                webView.loadUrl("javascript:" + insertRule1)
+                view.setVisibility(View.VISIBLE)
+                super.onPageFinished(view, url)
+            }
+        })
+
+        mBinding.web.setOnTouchListener(object : OnSwipeTouchListener(this){
+            override fun onSwipeLeft() {
+                Log.d("ttt", "previous view")
+            }
+
+            override fun onSwipeRight() {
+                Log.d("ttt", "next view")
+            }
+
+            override fun newTouch() {
+                super.newTouch()
+            }
+        })
+    }
+
+
+    fun readCss(): String {
 
 
         return "";
     }
-
 }

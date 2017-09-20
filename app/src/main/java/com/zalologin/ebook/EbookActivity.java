@@ -37,6 +37,7 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
     ActivityEbookBinding binding;
     private List<TOCReference> tocReferences;
     private String desFolder;
+    private Book book;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,7 +73,7 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
             InputStream epubInputStream = new FileInputStream(file);
 
             // Load Book from inputStream
-            Book book = (new EpubReader()).readEpub(epubInputStream);
+            book = (new EpubReader()).readEpub(epubInputStream);
 
             // Log the book's authors
             Log.i("epublib", "author(s): " + book.getMetadata().getAuthors());
@@ -146,9 +147,16 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
         int position = (int) v.getTag();
         Toast.makeText(this, tocReferences.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this, DetailBookActivity.class);
-        intent.putExtra("Chapter", tocReferences.get(position));
-        intent.putExtra("path", desFolder);
+//        Intent intent = new Intent(this, DetailBookActivity.class);
+//        intent.putExtra("Chapter", tocReferences.get(position));
+//        intent.putExtra("path", desFolder);
+//        startActivity(intent);
+
+        Intent intent = new Intent(this, DetailAllBookActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("Chapter", book);
+        bundle.putString("path", desFolder);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 }

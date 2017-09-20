@@ -1,84 +1,74 @@
 package com.zalologin.ebook
 
 import android.databinding.DataBindingUtil
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.view.View
 import android.webkit.JsResult
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 import com.zalologin.R
-import com.zalologin.ScreenUtil
-import com.zalologin.databinding.ActivityDetailBookBinding
+import com.zalologin.databinding.ActivityDetailAllBinding
+import nl.siegmann.epublib.domain.Book
 import nl.siegmann.epublib.domain.TOCReference
 
-
 /**
- * DetailBookActivity
+ * //Todo
  *
- * Created by HOME on 9/13/2017.
+ * Created by HOME on 9/20/2017.
  */
-class DetailBookActivity : AppCompatActivity() {
-    lateinit var mBinding: ActivityDetailBookBinding
+class DetailAllBookActivity : AppCompatActivity() {
+    lateinit var mBinding: ActivityDetailAllBinding
     private var desFolder: String = "";
+    private var book: Book? = null
+    private var tocReferences: List<TOCReference>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_detail_book)
-
+//        setContentView(R.layout.activity_detail_all)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail_book)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true)
-        }
-
-        val tocReference = intent.extras["Chapter"] as TOCReference
+        book = intent.extras["Chapter"] as Book
         desFolder = intent.extras["path"] as String
 
-        setData(tocReference)
-        Log.d("ttt", tocReference.title)
+        setData()
     }
 
-    fun setData(tocReference: TOCReference) {
-        val s = String(tocReference.resource.data)
-        mBinding.web.settings.javaScriptEnabled = true
+    private fun setData() {
+        tocReferences = book!!.getTableOfContents().tocReferences
 
-        setWebViewListener()
+        if (tocReferences == null) {
+            return
+        }
 
-
-        mBinding.web.loadUrl("file://" + desFolder + tocReference.resource.href)
+        var web: HorizontalWebView
+        tocReferences?.forEach { it ->
+            run {
+                web = HorizontalWebView(this, null)
+                web.settings.javaScriptEnabled = true
+                setWebViewListener(web)
+            }
+        }
     }
 
-    private fun setWebViewListener() {
-        mBinding.web.setWebViewClient(object : WebViewClient() {
+    private fun setWebViewListener(webView: HorizontalWebView) {
+        webView.setWebViewClient(object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
-                injectJavascript()
+                injectJavascript(webView)
             }
         })
 
-        mBinding.web.setWebChromeClient(object : WebChromeClient() {
+        webView.setWebChromeClient(object : WebChromeClient() {
             override fun onJsAlert(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean {
                 val pageCount = Integer.parseInt(message)
-                mBinding.web.setPageCount(pageCount)
-                mBinding.tvNumberOfPage.text = "1/" + pageCount
+                webView.setPageCount(pageCount)
                 result!!.confirm()
                 return true
             }
         })
-
-        mBinding.web.setOnSwipeListener(object : OnSwipeListener {
-            override fun onPage(current: Int, total: Int) {
-                mBinding.tvNumberOfPage.text = current.toString() + "/" + total.toString()
-            }
-        })
     }
 
-    private fun injectJavascript() {
+    private fun injectJavascript(webView: HorizontalWebView) {
         val js = "function initialize(){\n" +
                 " var d = document.getElementsByTagName('body')[0];\n" +
                 " var ourH = window.innerHeight;\n" +
@@ -93,7 +83,7 @@ class DetailBookActivity : AppCompatActivity() {
                 " d.style.webkitColumnCount = pageCount;\n" +
                 " return pageCount;\n" +
                 "}"
-        mBinding.web.loadUrl("javascript:" + js)
-        mBinding.web.loadUrl("javascript:alert(initialize())")
+        webView.loadUrl("javascript:" + js)
+        webView.loadUrl("javascript:alert(initialize())")
     }
 }

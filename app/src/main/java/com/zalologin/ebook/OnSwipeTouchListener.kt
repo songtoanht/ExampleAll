@@ -8,7 +8,7 @@ import android.view.View
 
 
 /**
- * //Todo
+ * OnSwipeTouchListener
  *
  * Created by HOME on 9/19/2017.
  */
@@ -93,10 +93,14 @@ open class OnSwipeTouchListener(context: Context) : View.OnTouchListener {
             val distanceX = e2.x - e1.x
             val distanceY = e2.y - e1.y
             if (Math.abs(distanceX) > Math.abs(distanceY) && Math.abs(distanceX) > SWIPE_DISTANCE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
-                if (distanceX > 0)
+                if (distanceX > 0) {
+                    System.out.println("ttt right")
                     onSwipeRight()
-                else
+                }
+                else {
+                    System.out.println("ttt left")
                     onSwipeLeft()
+                }
                 return true
             }
             return false

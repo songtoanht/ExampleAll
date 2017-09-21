@@ -147,16 +147,16 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
         int position = (int) v.getTag();
         Toast.makeText(this, tocReferences.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-//        Intent intent = new Intent(this, DetailBookActivity.class);
-//        intent.putExtra("Chapter", tocReferences.get(position));
-//        intent.putExtra("path", desFolder);
-//        startActivity(intent);
-
-        Intent intent = new Intent(this, DetailAllBookActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("Chapter", book);
-        bundle.putString("path", desFolder);
-        intent.putExtras(bundle);
+        Intent intent = new Intent(this, DetailBookActivity.class);
+        intent.putExtra("Chapter", tocReferences.get(position));
+        intent.putExtra("path", desFolder);
         startActivity(intent);
+
+//        Intent intent = new Intent(this, DetailAllBookActivity.class);
+//        Bundle bundle = new Bundle();
+//        bundle.putSerializable("Chapter", book);
+//        bundle.putString("path", desFolder);
+//        intent.putExtras(bundle);
+//        startActivity(intent);
     }
 }

@@ -8,6 +8,8 @@ import android.view.animation.LinearInterpolator;
 import android.webkit.WebView;
 
 /**
+ * HorizontalWebView
+ *
  * @author gautam chibde on 22/6/17.
  */
 

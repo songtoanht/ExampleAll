@@ -25,7 +25,8 @@ import nl.siegmann.epublib.domain.TOCReference
  */
 class DetailBookActivity : AppCompatActivity() {
     lateinit var mBinding: ActivityDetailBookBinding
-    private var desFolder: String = "";
+    private var desFolder: String = ""
+    private var fontSize: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +40,8 @@ class DetailBookActivity : AppCompatActivity() {
 
         val tocReference = intent.extras["Chapter"] as TOCReference
         desFolder = intent.extras["path"] as String
+
+        tocReference.resource.reader
 
         setData(tocReference)
         Log.d("ttt", tocReference.title)
@@ -63,19 +66,41 @@ class DetailBookActivity : AppCompatActivity() {
 
         mBinding.web.setWebChromeClient(object : WebChromeClient() {
             override fun onJsAlert(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean {
-                val pageCount = Integer.parseInt(message)
-                mBinding.web.setPageCount(pageCount)
-                mBinding.tvNumberOfPage.text = "1/" + pageCount
-                result!!.confirm()
+                if (!(message?.contains("get") == true)) {
+                    val pageCount = Integer.parseInt(message)
+                    mBinding.web.setPageCount(pageCount)
+                    mBinding.tvNumberOfPage.text = "1/" + pageCount
+                    result!!.confirm()
+                } else {
+                    if (message != null) {
+                        val size = message.substring(0, message.indexOf("px"))
+                        try {
+                            fontSize = Integer.parseInt(size)
+                        } catch (e: NumberFormatException) {
+                            Log.d("ttt", "Error");
+                        }
+                    }
+                }
                 return true
             }
         })
 
         mBinding.web.setOnSwipeListener(object : OnSwipeListener {
+            override fun onTouch() {
+
+            }
+
             override fun onPage(current: Int, total: Int) {
                 mBinding.tvNumberOfPage.text = current.toString() + "/" + total.toString()
             }
         })
+
+        mBinding.btnSize.setOnClickListener { getSize() }
+
+        mBinding.btnFont.setOnClickListener {
+            fontSize = fontSize + 2
+            changeSize(fontSize)
+        }
     }
 
     private fun injectJavascript() {
@@ -95,5 +120,34 @@ class DetailBookActivity : AppCompatActivity() {
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
         mBinding.web.loadUrl("javascript:alert(initialize())")
+    }
+
+
+    private fun changeCss() {
+        val js = "function changeColor() {\n" +
+                "document.getElementsByTagName('body')[0].style.color = 'red'; \n" +
+                "}"
+        mBinding.web.loadUrl("javascript:" + js)
+        mBinding.web.loadUrl("javascript:changeColor()")
+    }
+
+
+    private fun changeSize(size: Int) {
+        val js = "function changeSize() {\n" +
+                "document.getElementsByTagName('body')[0].style.fontSize ='" + size + "px'; \n" +
+                "}"
+        mBinding.web.loadUrl("javascript:" + js)
+        mBinding.web.loadUrl("javascript:changeSize()")
+    }
+
+    private fun getSize() {
+        val js = "function getFontSize() {\n" +
+                "var el = document.getElementsByTagName('body')[0];\n" +
+                "var style = window.getComputedStyle(el, null).getPropertyValue('font-size');\n" +
+                "var size = 'get';\n" +
+                " return [style, size];\n" +
+                "}"
+        mBinding.web.loadUrl("javascript:" + js)
+        mBinding.web.loadUrl("javascript:alert(getFontSize())")
     }
 }

@@ -7,4 +7,6 @@ package com.zalologin.ebook
  */
 interface OnSwipeListener {
     fun onPage(current: Int, total: Int)
+
+    fun onTouch()
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/rlWeb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/seekBar" />
+
+        <Button
+            android:id="@+id/btnSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Change size"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnFont"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/btnSize"
+            android:text="Change font"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnBackgroundAndColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/btnFont"
+            android:text="Change background"
+            android:textAllCaps="false" />
+
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/tvNumberOfPage"
+            android:background="#d0d0d0" />
+
+        <TextView
+            android:id="@+id/tvNumberOfPage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="#d0d0d0"
+            android:gravity="center"
+            android:padding="5dp" />
+    </RelativeLayout>
+</layout>

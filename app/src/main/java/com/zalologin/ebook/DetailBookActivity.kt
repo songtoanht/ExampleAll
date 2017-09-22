@@ -7,10 +7,7 @@ import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
-import android.webkit.JsResult
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import android.widget.Toast
 import com.zalologin.R
 import com.zalologin.ScreenUtil
@@ -26,11 +23,10 @@ import nl.siegmann.epublib.domain.TOCReference
 class DetailBookActivity : AppCompatActivity() {
     lateinit var mBinding: ActivityDetailBookBinding
     private var desFolder: String = ""
-    private var fontSize: Int = 0
+    private var fontSize = 16
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_detail_book)
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail_book)
 
@@ -40,8 +36,6 @@ class DetailBookActivity : AppCompatActivity() {
 
         val tocReference = intent.extras["Chapter"] as TOCReference
         desFolder = intent.extras["path"] as String
-
-        tocReference.resource.reader
 
         setData(tocReference)
         Log.d("ttt", tocReference.title)
@@ -83,9 +77,22 @@ class DetailBookActivity : AppCompatActivity() {
                 }
                 return true
             }
+
+            override fun onJsConfirm(view: WebView?, url: String?, message: String?, result: JsResult?): Boolean {
+                injectJavascript()
+                return super.onJsConfirm(view, url, message, result)
+            }
         })
 
         mBinding.web.setOnSwipeListener(object : OnSwipeListener {
+            override fun onNextChapter() {
+                System.out.println("onNextChapter")
+            }
+
+            override fun onPreviousChapter() {
+                System.out.println("onPreviousChapter")
+            }
+
             override fun onTouch() {
 
             }
@@ -95,10 +102,13 @@ class DetailBookActivity : AppCompatActivity() {
             }
         })
 
-        mBinding.btnSize.setOnClickListener { getSize() }
+        mBinding.btnSize.setOnClickListener {
+            fontSize = fontSize + 2
+            changeSize(fontSize)
+        }
 
         mBinding.btnFont.setOnClickListener {
-            fontSize = fontSize + 2
+            fontSize = fontSize - 2
             changeSize(fontSize)
         }
     }
@@ -128,16 +138,16 @@ class DetailBookActivity : AppCompatActivity() {
                 "document.getElementsByTagName('body')[0].style.color = 'red'; \n" +
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
-        mBinding.web.loadUrl("javascript:changeColor()")
+        mBinding.web.loadUrl("javascript:confirm(changeColor())")
     }
 
 
     private fun changeSize(size: Int) {
-        val js = "function changeSize() {\n" +
-                "document.getElementsByTagName('body')[0].style.fontSize ='" + size + "px'; \n" +
+        val js = "function changeSize(s) {\n" +
+                "document.getElementsByTagName('body')[0].style.fontSize = s + 'px'; \n" +
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
-        mBinding.web.loadUrl("javascript:changeSize()")
+        mBinding.web.loadUrl("javascript:confirm(changeSize($size))")
     }
 
     private fun getSize() {

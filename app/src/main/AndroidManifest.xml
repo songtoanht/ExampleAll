@@ -43,6 +43,7 @@
         <activity android:name=".ebook.DetailBookActivity" />
         <activity android:name=".ebook.EbookActivity" />
         <activity android:name=".ebook.ListBookActivity" />
+        <activity android:name=".ebook.DetailAllBookActivity" />
 
         <service
             android:name="service.FloatingService"

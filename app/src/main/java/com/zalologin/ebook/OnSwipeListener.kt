@@ -9,4 +9,8 @@ interface OnSwipeListener {
     fun onPage(current: Int, total: Int)
 
     fun onTouch()
+
+    fun onNextChapter()
+
+    fun onPreviousChapter()
 }

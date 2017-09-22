@@ -67,6 +67,10 @@ public class HorizontalWebView extends WebView {
             if (mListener != null) {
                 mListener.onPage(getCurrentPage() + 1, pageCount);
             }
+        } else {
+            if (mListener != null) {
+                mListener.onPreviousChapter();
+            }
         }
     }
 
@@ -83,6 +87,10 @@ public class HorizontalWebView extends WebView {
             scrollTo(scrollX, 0);
             if (mListener != null) {
                 mListener.onPage(getCurrentPage() + 1, pageCount);
+            }
+        } else {
+            if (mListener != null) {
+                mListener.onPreviousChapter();
             }
         }
     }
@@ -106,5 +114,15 @@ public class HorizontalWebView extends WebView {
 
     public void setPageCount(int pageCount) {
         this.pageCount = pageCount;
+    }
+
+    public void goTopPage(int scrollX) {
+        scrollTo(scrollX, 0);
+    }
+
+    public void refreshWebView() {
+        x1 = -1;
+        pageCount = 0;
+        current_x = 0;
     }
 }

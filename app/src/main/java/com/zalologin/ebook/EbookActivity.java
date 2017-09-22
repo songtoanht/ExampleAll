@@ -81,6 +81,8 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
             // Log the book's title
             Log.i("epublib", "title: " + book.getTitle());
 
+            book.getSpine().getSpineReferences().get(0).getResource().getHref();
+
             // Log the book's coverimage property
             Bitmap coverImage = BitmapFactory.decodeStream(book.getCoverImage()
                     .getInputStream());
@@ -147,16 +149,13 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
         int position = (int) v.getTag();
         Toast.makeText(this, tocReferences.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this, DetailBookActivity.class);
-        intent.putExtra("Chapter", tocReferences.get(position));
+//        Intent intent = new Intent(this, DetailBookActivity.class);
+//        intent.putExtra("Chapter", tocReferences.get(position));
+//        intent.putExtra("path", desFolder);
+//        startActivity(intent);
+
+        Intent intent = new Intent(this, DetailAllBookActivity.class);
         intent.putExtra("path", desFolder);
         startActivity(intent);
-
-//        Intent intent = new Intent(this, DetailAllBookActivity.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putSerializable("Chapter", book);
-//        bundle.putString("path", desFolder);
-//        intent.putExtras(bundle);
-//        startActivity(intent);
     }
 }

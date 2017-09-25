@@ -90,7 +90,7 @@ public class HorizontalWebView extends WebView {
             }
         } else {
             if (mListener != null) {
-                mListener.onPreviousChapter();
+                mListener.onNextChapter();
             }
         }
     }

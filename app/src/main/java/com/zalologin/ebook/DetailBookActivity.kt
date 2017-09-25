@@ -3,14 +3,13 @@ package com.zalologin.ebook
 import android.databinding.DataBindingUtil
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.view.View
-import android.webkit.*
-import android.widget.Toast
+import android.webkit.JsResult
+import android.webkit.WebChromeClient
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import com.zalologin.R
-import com.zalologin.ScreenUtil
 import com.zalologin.databinding.ActivityDetailBookBinding
 import nl.siegmann.epublib.domain.TOCReference
 
@@ -108,24 +107,24 @@ class DetailBookActivity : AppCompatActivity() {
         }
 
         mBinding.btnFont.setOnClickListener {
-            fontSize = fontSize - 2
-            changeSize(fontSize)
+            changeColorTextAndBackground(fontSize % 3)
         }
     }
 
     private fun injectJavascript() {
         val js = "function initialize(){\n" +
                 " var d = document.getElementsByTagName('body')[0];\n" +
+                " d.style.margin = 0;\n" +
                 " var ourH = window.innerHeight;\n" +
                 " var ourW = window.innerWidth;\n" +
                 " var fullH = d.offsetHeight;\n" +
-                " var pageCount = Math.floor(fullH/ourH)+1;\n" +
+                " var pageCount = Math.ceil(fullH/ourH);\n" +
                 " var currentPage = 0;\n" +
                 " var newW = pageCount*ourW;\n" +
                 " d.style.height = ourH+'px';\n" +
-                " d.style.width = newW+'px';\n" +
-                //                " d.style.margin = 0;\n" +
+                " d.style.width = newW +'px';\n" +
                 " d.style.webkitColumnCount = pageCount;\n" +
+                //                " d.style.webkitColumnGap = '0px';\n" +
                 " return pageCount;\n" +
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
@@ -133,18 +132,28 @@ class DetailBookActivity : AppCompatActivity() {
     }
 
 
-    private fun changeCss() {
-        val js = "function changeColor() {\n" +
-                "document.getElementsByTagName('body')[0].style.color = 'red'; \n" +
+    private fun changeColorTextAndBackground(type: Int) {
+        val js = "function changeColor(type) {\n" +
+                "var tcl = 'black';\n" +
+                "var bgcl = 'white';\n" +
+                " if (type == 1) {" +
+                "tcl = 'white';\n" +
+                "bgcl = 'black';\n" +
+                "} else if (type == 2){\n" +
+                "tcl = 'black';\n" +
+                "bgcl = 'red';\n" +
+                "}\n" +
+                "document.body.style.backgroundColor = bgcl;\n" +
+                "document.body.style.color = tcl;\n" +
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
-        mBinding.web.loadUrl("javascript:confirm(changeColor())")
+        mBinding.web.loadUrl("javascript:changeColor($type)")
     }
 
 
     private fun changeSize(size: Int) {
         val js = "function changeSize(s) {\n" +
-                "document.getElementsByTagName('body')[0].style.fontSize = s + 'px'; \n" +
+                "document.body.style.fontSize = s + 'px'; \n" +
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
         mBinding.web.loadUrl("javascript:confirm(changeSize($size))")

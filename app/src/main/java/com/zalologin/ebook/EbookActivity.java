@@ -48,7 +48,7 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
 
         String filePath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
                 + File.separator + "EPUB" + File.separator;
-        String zipName = "hpmor.epub";
+        String zipName = "book000006.epub";
 
         desFolder = filePath + "file" + File.separator;
 
@@ -64,7 +64,7 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
 
     private void initReadBook() {
         String path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/EPUB/";
-        File file = new File(path, "hpmor.epub");
+        File file = new File(path, "book000006.epub");
         try {
             // find InputStream for book
 //            InputStream epubInputStream = assetManager

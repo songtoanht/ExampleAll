@@ -19,6 +19,7 @@ import com.zalologin.ScreenUtil
 import com.zalologin.databinding.ActivityDetailAllBinding
 import com.zalologin.databinding.ActivityDetailAllBookBinding
 import nl.siegmann.epublib.domain.Book
+import nl.siegmann.epublib.domain.SpineReference
 import nl.siegmann.epublib.domain.TOCReference
 import nl.siegmann.epublib.epub.EpubReader
 import java.io.File
@@ -36,6 +37,7 @@ class DetailAllBookActivity : AppCompatActivity() {
     private var desFolder: String = "";
     private var book: Book? = null
     private var tocReferences: List<TOCReference>? = null
+    private var spineReferences: List<SpineReference>? = null
     private var horizontals = ArrayList<HorizontalWebView>()
     private var totalPage = 0
     private var pages = ArrayList<PageBook>()
@@ -43,6 +45,8 @@ class DetailAllBookActivity : AppCompatActivity() {
     lateinit var web: HorizontalWebView
     private var chapters = ArrayList<Chapter>()
     private var ch = 1
+    private var isClick = false
+    private var coordinateX = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +64,10 @@ class DetailAllBookActivity : AppCompatActivity() {
             chapters
                     .filter { it.id == ch }
                     .forEach {
+                        isClick = true
                         web.refreshWebView()
-                        web.loadUrl(it.lastPage?.link)
+                        web.loadUrl(it.firstPage?.link)
+                        coordinateX = it.firstPage?.coordinateX!!
                         ch++
                     }
 
@@ -69,25 +75,31 @@ class DetailAllBookActivity : AppCompatActivity() {
 
         web.setOnSwipeListener(object : OnSwipeListener {
             override fun onPreviousChapter() {
-                if (ch < chapters.size) {
+                ch = ch - 2
+                if (ch > 0) {
                     chapters
                             .filter { it.id == ch }
                             .forEach {
+                                isClick = true
                                 web.refreshWebView()
                                 web.loadUrl(it.lastPage?.link)
+                                coordinateX = it.lastPage?.coordinateX!!
+                                ch++
                             }
                 }
             }
 
             override fun onNextChapter() {
-                if (ch  - 1 > 1) {
-                    ch = ch - 2
+                if (ch <= chapters.size) {
                     chapters
                             .filter { it.id == ch }
                             .forEach {
+                                isClick = true
                                 web.refreshWebView()
-                                web.loadUrl(it.lastPage?.link)
-                                web.goTopPage(it.lastPage?.coordinateX!!)
+                                web.loadUrl(it.firstPage?.link)
+//                                web.goTopPage(it.firstPage?.coordinateX!!)
+                                coordinateX = it.firstPage?.coordinateX!!
+                                ch++
                             }
                 }
             }
@@ -104,7 +116,7 @@ class DetailAllBookActivity : AppCompatActivity() {
 
     private fun initReadBook() {
         val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.toString() + "/EPUB/"
-        val file = File(path, "hpmor.epub")
+        val file = File(path, "book000006.epub")
         try {
             // find InputStream for book
             //            InputStream epubInputStream = assetManager
@@ -135,14 +147,25 @@ class DetailAllBookActivity : AppCompatActivity() {
                 tocReferences = book!!.tableOfContents.tocReferences
                 logTableOfContents(book!!.tableOfContents.tocReferences, 0)
 
-                if (tocReferences != null) {
-                    web = HorizontalWebView(this, null)
-                    addView(tocReferences!![d])
-                }
+                getContentBook(book!!)
+
+//                if (tocReferences != null) {
+//                    web = HorizontalWebView(this, null)
+//                    addView(tocReferences!![d])
+//                }
             }
         } catch (e: IOException) {
             println("epublib error")
             Log.e("epublib", e.message)
+        }
+    }
+
+    private fun getContentBook(book: Book) {
+        spineReferences = book.spine.spineReferences
+
+        if (spineReferences != null) {
+            web = HorizontalWebView(this, null)
+            addView(spineReferences!![d])
         }
     }
 
@@ -164,13 +187,14 @@ class DetailAllBookActivity : AppCompatActivity() {
         }
     }
 
-    private fun addView(tocReference: TOCReference) {
+    private fun addView(spineReference: SpineReference) {
 //        var web = HorizontalWebView(this, null)
         val layoutParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
         mBinding.rlWeb.addView(web, layoutParams)
         web.settings.javaScriptEnabled = true
         setWebViewListener(web)
-        web.loadUrl("file://" + desFolder + tocReference.resource.href)
+//        spineReference.resource.href
+        web.loadUrl("file://" + desFolder + spineReference.resource.href)
 //        horizontals.add(web)
 //        horizontals.add(web)
     }
@@ -187,36 +211,42 @@ class DetailAllBookActivity : AppCompatActivity() {
                 var pageCount = 0
                 try {
                     pageCount = Integer.parseInt(message)
-                    var chapter = Chapter()
-                    for (i in 0 until pageCount) {
-                        var page = PageBook()
-                        page.chapter = d + 1
-                        page.coordinateX = i * webView.width
-                        page.order = totalPage + i + 1
-                        page.link = url!!
-                        pages.add(page)
-                        if (i == 0) {
-                            chapter.id = d + 1
-                            chapter.firstPage = page
-                        } else if (i == pageCount - 1) {
-                            chapter.lastPage = page
+                    if (!isClick) {
+                        var chapter = Chapter()
+                        for (i in 0 until pageCount) {
+                            var page = PageBook()
+                            page.chapter = d + 1
+                            page.coordinateX = i * webView.width
+                            page.order = totalPage + i + 1
+                            page.link = url!!
+                            pages.add(page)
+                            if (i == 0) {
+                                chapter.id = d + 1
+                                chapter.firstPage = page
+                            }
+                            if (i == pageCount - 1) {
+                                chapter.lastPage = page
+                            }
                         }
+                        chapters.add(chapter)
                     }
-                    chapters.add(chapter)
                 } catch (e: NumberFormatException) {
                     System.out.println("Error");
                     e.printStackTrace()
                 }
                 webView.setPageCount(pageCount)
+                if (isClick) {
+                    webView.goTopPage(coordinateX)
+                }
                 result!!.confirm()
                 d++
                 totalPage += pageCount;
                 System.out.println("chuong: $d | so trang: $pageCount | tong so: $totalPage")
                 if (d < tocReferences!!.size) {
                     mBinding.rlWeb.removeAllViews()
-                    addView(tocReferences!![d])
+                    addView(spineReferences!![d])
                 } else {
-                    System.out.println("chuong Da tao page : " + pages[0].link)
+                    System.out.println("chuong Da tao page : " + pages[0].link + " : " + chapters[0].id)
                 }
                 return true
             }

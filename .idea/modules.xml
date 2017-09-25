@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/ExampleAll.iml" filepath="$PROJECT_DIR$/ExampleAll.iml" />
       <module fileurl="file://$PROJECT_DIR$/ZaloAppSDK/ZaloAppSDK.iml" filepath="$PROJECT_DIR$/ZaloAppSDK/ZaloAppSDK.iml" />
       <module fileurl="file://$PROJECT_DIR$/ZaloLogin.iml" filepath="$PROJECT_DIR$/ZaloLogin.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />

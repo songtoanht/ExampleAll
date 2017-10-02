@@ -100,6 +100,7 @@ public class FileUtilsssssss {
                     try {
                         in = assetManager.open(filename);
                         File outFile = new File(desFolder, filename);
+                        System.out.println(outFile.getAbsolutePath());
                         out = new FileOutputStream(outFile);
                         copyFile(in, out);
                     } catch (IOException e) {

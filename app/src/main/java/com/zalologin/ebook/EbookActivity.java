@@ -48,7 +48,9 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
 
         String filePath = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
                 + File.separator + "EPUB" + File.separator;
-        String zipName = "book000006.epub";
+        String zipName = "ebook000001.epub";
+
+//        FileUtilsssssss.copyAssets(this, filePath);
 
         desFolder = filePath + "file" + File.separator;
 
@@ -64,7 +66,7 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
 
     private void initReadBook() {
         String path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) + "/EPUB/";
-        File file = new File(path, "book000006.epub");
+        File file = new File(path, "ebook000001.epub");
         try {
             // find InputStream for book
 //            InputStream epubInputStream = assetManager
@@ -84,13 +86,13 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
             book.getSpine().getSpineReferences().get(0).getResource().getHref();
 
             // Log the book's coverimage property
-            Bitmap coverImage = BitmapFactory.decodeStream(book.getCoverImage()
-                    .getInputStream());
-            Log.i("epublib", "Coverimage is " + coverImage.getWidth() + " by "
-                    + coverImage.getHeight() + " pixels");
+//            Bitmap coverImage = BitmapFactory.decodeStream(book.getCoverImage()
+//                    .getInputStream());
+//            Log.i("epublib", "Coverimage is " + coverImage.getWidth() + " by "
+//                    + coverImage.getHeight() + " pixels");
 
             binding.setBook(book);
-            binding.imgBook.setImageBitmap(coverImage);
+//            binding.imgBook.setImageBitmap(coverImage);
 
             // Log the tale of contents
             System.out.println("epublib read");
@@ -149,13 +151,13 @@ public class EbookActivity extends AppCompatActivity implements View.OnClickList
         int position = (int) v.getTag();
         Toast.makeText(this, tocReferences.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-//        Intent intent = new Intent(this, DetailBookActivity.class);
-//        intent.putExtra("Chapter", tocReferences.get(position));
-//        intent.putExtra("path", desFolder);
-//        startActivity(intent);
-
-        Intent intent = new Intent(this, DetailAllBookActivity.class);
+        Intent intent = new Intent(this, DetailBookActivity.class);
+        intent.putExtra("Chapter", tocReferences.get(position));
         intent.putExtra("path", desFolder);
         startActivity(intent);
+//
+//        Intent intent = new Intent(this, DetailAllBookActivity.class);
+//        intent.putExtra("path", desFolder);
+//        startActivity(intent);
     }
 }

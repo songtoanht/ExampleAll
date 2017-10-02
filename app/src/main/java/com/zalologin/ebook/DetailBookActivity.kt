@@ -53,7 +53,7 @@ class DetailBookActivity : AppCompatActivity() {
     private fun setWebViewListener() {
         mBinding.web.setWebViewClient(object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
-                injectJavascript()
+//                injectJavascript()
             }
         })
 
@@ -71,6 +71,7 @@ class DetailBookActivity : AppCompatActivity() {
                             fontSize = Integer.parseInt(size)
                         } catch (e: NumberFormatException) {
                             Log.d("ttt", "Error");
+                            e.printStackTrace()
                         }
                     }
                 }
@@ -107,14 +108,14 @@ class DetailBookActivity : AppCompatActivity() {
         }
 
         mBinding.btnFont.setOnClickListener {
-            changeColorTextAndBackground(fontSize % 3)
+            changeFont2()
         }
     }
 
     private fun injectJavascript() {
         val js = "function initialize(){\n" +
                 " var d = document.getElementsByTagName('body')[0];\n" +
-                " d.style.margin = 0;\n" +
+                "d.style.padding = '0px';\n" +
                 " var ourH = window.innerHeight;\n" +
                 " var ourW = window.innerWidth;\n" +
                 " var fullH = d.offsetHeight;\n" +
@@ -123,8 +124,9 @@ class DetailBookActivity : AppCompatActivity() {
                 " var newW = pageCount*ourW;\n" +
                 " d.style.height = ourH+'px';\n" +
                 " d.style.width = newW +'px';\n" +
+                " d.style.margin = '8px';\n" +
+                " d.style.webkitColumnGap = '16px';\n" +
                 " d.style.webkitColumnCount = pageCount;\n" +
-                //                " d.style.webkitColumnGap = '0px';\n" +
                 " return pageCount;\n" +
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
@@ -168,5 +170,35 @@ class DetailBookActivity : AppCompatActivity() {
                 "}"
         mBinding.web.loadUrl("javascript:" + js)
         mBinding.web.loadUrl("javascript:alert(getFontSize())")
+    }
+
+    private fun changeFont() {
+
+        val addCSSRule = "function addCSSRule(selector, newRule) {\n" +
+                "var mySheet = document.styleSheets[0];\n" +
+                "ruleIndex = mySheet.cssRules.length;\n" +
+                "mySheet.insertRule(selector + '{' + newRule + ';}', ruleIndex);\n" +
+                "}"
+
+        val insertRule1 = "addCSSRule('html, body, div, p, span, a, h1, h2, h3, h4, h5, h6', " +
+                "'font-family: Palatino;')"
+
+        mBinding.web.loadUrl("javascript:" + addCSSRule)
+        mBinding.web.loadUrl("javascript:" + insertRule1)
+    }
+
+    private fun changeFont2() {
+        val addCSSRule = "function myFunction() {\n" +
+                "var parent = document.getElementsByTagName('head').item(0);\n" +
+                "var style = document.createElement('style');\n" +
+                "style.type = 'text/css';\n" +
+                "style.innerHTML = '@font-face {font-family: Haha; src: url(file:///android_asset/OpenSans-Bold.ttf); }  " +
+                "body,html, a, h1,h2,h3,h4,h5,h6,div,p {font-family: Haha}';\n" +
+                "parent.appendChild(style); \n" +
+                "}"
+
+
+        mBinding.web.loadUrl("javascript:" + addCSSRule)
+        mBinding.web.loadUrl("javascript:myFunction()")
     }
 }

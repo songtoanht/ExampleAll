@@ -116,7 +116,7 @@ class DetailAllBookActivity : AppCompatActivity() {
 
     private fun initReadBook() {
         val path = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.toString() + "/EPUB/"
-        val file = File(path, "book000006.epub")
+        val file = File(path, "ebook000001.epub")
         try {
             // find InputStream for book
             //            InputStream epubInputStream = assetManager
